@@ -21,6 +21,7 @@ func NewUser(name, email string, age int) *User {
 	}
 }
 
+// データ操作 Data access object dao, SQL
 func (u *User) FindByEmail(email string) error {
 	return database.Get().
 		Where("email = ?", email).
@@ -28,7 +29,6 @@ func (u *User) FindByEmail(email string) error {
 		Error
 }
 
-// データ操作 Data access Object dao, SQL
 func (u *User) Find(id int64) error {
 	return database.Get().First(u, id).Error
 }
@@ -45,7 +45,7 @@ func (u *User) Delete() error {
 	return database.Get().Delete(u).Error
 }
 
-// ビジネスロジック
+// ビジネスロジック, 業務ルール
 func (u *User) Signup(name, email string, age int) error {
 	if err := u.FindByEmail(email); err != nil {
 		return err
