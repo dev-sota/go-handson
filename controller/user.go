@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -38,30 +37,10 @@ func (u user) Get(w http.ResponseWriter, r *http.Request) {
 func (u user) Signup(w http.ResponseWriter, r *http.Request) {
 	name := "dev-sota"
 	email := "test@exam.com"
+	age := 25
 
-	var m *model.User
-	if err := m.FindByEmail(email); err != nil {
-		return
-	}
-	if m.ID != 0 {
-		fmt.Println("already registerd")
-		w.Header().Add("Content-type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-	}
-
-	// ビジネスロジック
-	// if name == "ito" {
-	// 	fmt.Println("クーポン発行")
-	// }
-	// if age < 20 {
-	// 	fmt.Println("クーポン発行")
-	// }
-	// if birthDayMonth == time.Now().Month() {
-	// 	fmt.Println("クーポン発行")
-	// }
-
-	usr := model.NewUser(name, email)
-	usr.Create()
+	var usr *model.User
+	usr.Signup(name, email, age)
 
 	v := view.NewUser(usr)
 

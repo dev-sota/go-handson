@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+
 	"github.com/dev-sota/go-handson/database"
 )
 
@@ -8,9 +10,10 @@ type User struct {
 	ID    int64
 	Name  string
 	Email string
+	Age   int
 }
 
-func NewUser(name, email string) *User {
+func NewUser(name, email string, age int) *User {
 	return &User{
 		Name:  name,
 		Email: email,
@@ -38,4 +41,29 @@ func (u *User) Update() error {
 
 func (u *User) Delete() error {
 	return database.Get().Delete(u).Error
+}
+
+func (u *User) Signup(name, email string, age int) error {
+	if err := u.FindByEmail(email); err != nil {
+		return err
+	}
+	if u.ID != 0 {
+		return fmt.Errorf("already registerd")
+	}
+
+	// ビジネスロジック
+	if name == "ito" {
+		fmt.Println("クーポン発行")
+	}
+	if age < 20 {
+		fmt.Println("クーポン発行")
+	}
+	// if birthDayMonth == time.Now().Month() {
+	// 	fmt.Println("クーポン発行")
+	// }
+
+	u.Name = name
+	u.Email = email
+	u.Age = age
+	return u.Create()
 }
