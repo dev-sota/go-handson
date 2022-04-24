@@ -6,6 +6,7 @@ import (
 	"github.com/dev-sota/go-handson/database"
 )
 
+// ドメイン、業務の登場人物
 type User struct {
 	ID    int64
 	Name  string
@@ -27,6 +28,7 @@ func (u *User) FindByEmail(email string) error {
 		Error
 }
 
+// データ操作 Data access Object dao, SQL
 func (u *User) Find(id int64) error {
 	return database.Get().First(u, id).Error
 }
@@ -43,6 +45,7 @@ func (u *User) Delete() error {
 	return database.Get().Delete(u).Error
 }
 
+// ビジネスロジック
 func (u *User) Signup(name, email string, age int) error {
 	if err := u.FindByEmail(email); err != nil {
 		return err
@@ -51,7 +54,6 @@ func (u *User) Signup(name, email string, age int) error {
 		return fmt.Errorf("already registerd")
 	}
 
-	// ビジネスロジック
 	if name == "ito" {
 		fmt.Println("クーポン発行")
 	}
