@@ -3,32 +3,30 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
-	"github.com/dev-sota/go-handson/model"
+	"github.com/dev-sota/go-handson/usecase"
 	"github.com/dev-sota/go-handson/view"
-	"github.com/go-chi/chi"
+	"gorm.io/gorm"
 )
 
-type user struct{}
-
-func NewUser() *user {
-	return &user{}
+type user struct {
+	uu usecase.User
 }
 
-func (u user) Get(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
-	if err != nil {
-		return
+func NewUser(db *gorm.DB) *user {
+	return &user{
+		uu: *usecase.NewUser(db),
 	}
+}
 
-	var m *model.User
-	if err := m.Find(int64(id)); err != nil {
-		return
-	}
+func (u user) Signup(w http.ResponseWriter, r *http.Request) {
+	name := "dev-sota"
+	email := "test@exam.com"
+	age := 25
+
+	m, _ := u.uu.Signup(name, email, age)
 
 	v := view.NewUser(m)
-
 	w.Header().Add("Content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(v)

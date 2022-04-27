@@ -1,28 +1,29 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/dev-sota/go-handson/controller"
-	"github.com/dev-sota/go-handson/database"
 	"github.com/go-chi/chi"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-func newRouter() http.Handler {
-	r := chi.NewRouter()
-	u := controller.NewUser()
+const dsn = "root:password@tcp(127.0.0.1:3306)/go-handson?charset=utf8mb4&parseTime=True&loc=Local"
 
-	r.Get("/users/{id}", u.Get)
+func newRouter(db *gorm.DB) http.Handler {
+	r := chi.NewRouter()
+	u := controller.NewUser(db)
+
+	r.Post("/users/signup", u.Signup)
 	return r
 }
 
 func main() {
-	err := database.Init()
+	db, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
-
-	h := newRouter()
+	h := newRouter(db)
 	http.ListenAndServe(":3000", h)
 }
